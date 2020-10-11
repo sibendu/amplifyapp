@@ -1,68 +1,74 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1. Create a User Identity Pool - onestore
 
-## Available Scripts
+Domain Name: set a domain name after as per availability (onestore; restof the steps use this value)
+https://onestore.auth.eu-west-1.amazoncognito.com
 
-In the project directory, you can run:
+2. Resource Server: 
+Define scopes.  e.g. onestore/test
 
-### `npm start`
+3. App clients: two app clients registers
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+a) web_client :  id = 75h5m8k..... -> to be used by web/ mobiles; DO NOT use secret. 
+	In App Client Setting:   allowed 'Authorizaton_code', 'Implicit_Grant'	and oAuth scope (user, email,..)
+	Used dummy url for callback and sign out (e.g. https://www.google.com ; same to be used below)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+b) system_client : id = 2a3d185l....  secret = 1m4hqn1....   -> this is to be used for application clients and uses secret.
+	In App Client Setting:   allow 'client_credentials' and associate with scope defined in resource server (onestore/test)
 
-### `npm test`
+4. Now we can register new users, and login: 
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+https://onestore.auth.eu-west-1.amazoncognito.com/login?response_type=code&client_id=<web_client_id e.g. 75h5m8k.....>&redirect_uri=https://www.google.com
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. Now we can authorize, get token, get user info using API (https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html) 
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+a) Authorize:
+==========
+GET https://onestore.auth.eu-west-1.amazoncognito.com/oauth2/authorize?response_type=code&client_id=<web_client_id e.g. 75h5m8k.....>&redirect_uri=https://www.google.com
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Redirects to: https://www.google.com/?code=ec8f35bd-e3fa-4d7c-a3a4-01f2fcba8547  (It is the Authorization Code)
 
-### `npm run eject`
+Token:
+========
+For using the 'system_client' : 
+-----------------------------
+POST https://onestore.auth.eu-west-1.amazoncognito.com/oauth2/token
+Header: Authorization=Basic <client_id:client_secret above> and Content-Type='application/x-www-form-urlencoded'
+Body: grant_type=client_credentials&scope=onestore/test
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Returns following response:
+{
+    "access_token": "ey.......O4e7rA",
+    "expires_in": 3600,
+    "token_type": "Bearer"
+}
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+For using the 'web_client' : 
+--------------------
+POST https://onestore.auth.eu-west-1.amazoncognito.com/oauth2/token
+Header: Content-Type='application/x-www-form-urlencoded'
+Body: grant_type=authorization_code&client_id=<web_client_id>&redirect_uri=https://www.google.com&code=<AuthCode-received-step-above>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Returns following response:
+{
+    "id_token": "eyJ...BVSg",
+    "access_token": "eyJra...PiZxfNQ",
+    "refresh_token": "eyJjdHk...IJeoQ",
+    "expires_in": 3600,
+    "token_type": "Bearer"
+}
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Get User Info:
+========
+GET https://onestore.auth.eu-west-1.amazoncognito.com/oauth2/userInfo
+Header: Bearer Token <access-token from step above>
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Returns:
+{
+    "sub": "79740408-f510-4804-....",
+    "email_verified": "true",
+    "phone_number_verified": "false",
+    "phone_number": "+91*********",
+    "email": "***@gmail.com",
+    "username": "meh**"
+}
