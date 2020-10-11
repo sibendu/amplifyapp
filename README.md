@@ -1,14 +1,14 @@
 ## 1. Create a User Identity Pool - onestore
-============================
+
 Domain Name: set a domain name after as per availability (onestore; restof the steps use this value)
 https://onestore.auth.eu-west-1.amazoncognito.com
 
 ## 2. Resource Server: 
-============================
+
 Define scopes.  e.g. onestore/test
 
 ## 3. App clients: two app clients registers
-============================
+
 a) web_client :  id = 75h5m8k..... -> to be used by web/ mobiles; DO NOT use secret. 
 	In App Client Setting:   allowed 'Authorizaton_code', 'Implicit_Grant'	and oAuth scope (user, email,..)
 	Used dummy url for callback and sign out (e.g. https://www.google.com ; same to be used below)
@@ -17,12 +17,12 @@ b) system_client : id = 2a3d185l....  secret = 1m4hqn1....   -> this is to be us
 	In App Client Setting:   allow 'client_credentials' and associate with scope defined in resource server (onestore/test)
 
 ## 4. Now we can register new users, and login: 
-==========================
+
 https://onestore.auth.eu-west-1.amazoncognito.com/login?response_type=code&client_id=<web_client_id e.g. 75h5m8k.....>&redirect_uri=https://www.google.com
 
 
 ## 5. Now we can authorize, get token, get user info using API 
-============================
+
 (https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html) 
 
 ### a) Authorize:
