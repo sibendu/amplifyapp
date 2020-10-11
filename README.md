@@ -74,3 +74,13 @@ Returns:
     "email": "***@gmail.com",
     "username": "meh**"
 }
+
+## 6. For making use of this React UI app
+
+Edit: src/aws-exports.js
+
+Run:
+npm install 
+npm start
+
+Now we can access: http://localhost:3000
