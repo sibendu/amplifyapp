@@ -77,10 +77,10 @@ Returns:
 
 ## 6. For making use of this React UI app
 
-Edit: src/aws-exports.js
+Edit: src/aws-exports.js - set the details of Cognito use pool
 
 Run:
 npm install 
 npm start
 
-Now we can access: http://localhost:3000
+Now access: http://localhost:3000
