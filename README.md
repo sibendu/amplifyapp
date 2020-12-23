@@ -47,6 +47,8 @@ Returns following response:
     "token_type": "Bearer"
 }
 
+Note: when making call using Postman, take care URL has no additional space, it was giving error dueto that !
+
 #### For using the 'web_client' : 
 POST https://oss.auth.eu-west-1.amazoncognito.com/oauth2/token
 Header: Content-Type='application/x-www-form-urlencoded'
