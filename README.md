@@ -47,7 +47,7 @@ Returns following response:
     "token_type": "Bearer"
 }
 
-Note: when making call using Postman, take care URL has no additional space, it was giving error dueto that !
+Note: when making call using Postman, take care 1> URL has no additional space, it was giving error dueto that ! 2> Donot use Basic Authto enter client id and secret, rather it has to be Base64Encoded value of client_id:client_secret (can be generated using online tool)
 
 #### For using the 'web_client' : 
 POST https://oss.auth.eu-west-1.amazoncognito.com/oauth2/token
