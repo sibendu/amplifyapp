@@ -9,7 +9,8 @@ Define scopes.  e.g. oss/test
 
 ## 3. App clients: two app clients registers
 
-a) web_client :  id = 75h5m8k..... -> to be used by web/ mobiles; DO NOT use secret. 
+a) web_client :  id = 75h5m8k..... -> to be used by web/ mobiles; 
+#DO NOT use secret. 
 	In App Client Setting:   allowed 'Authorizaton_code', 'Implicit_Grant'	and oAuth scope (user, email,..)
 	Used dummy url for callback and sign out (e.g. https://www.google.com ; same to be used below)
 
